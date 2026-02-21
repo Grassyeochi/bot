@@ -1,0 +1,18 @@
+{
+  "name": "chzzk-bot",
+  "version": "1.0.0",
+  "description": "Chzzk Chat Bot",
+  "main": "index.js",
+  "bin": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "axios": "^0.27.2",
+    "buzzk": "1.11.3",
+    "dotenv": "^16.4.5",
+    "mysql2": "^3.9.0",
+    "nodemailer": "^8.0.1",
+    "ws": "^8.16.0"
+  }
+}
