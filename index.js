@@ -246,12 +246,21 @@ async function processLogic(msg) {
         const char = msg.substring(1).trim();
         if (char) {
             try {
-                // SQL: can_use가 1(true)인 단어 카운트
-                const sql = "SELECT count(*) as cnt FROM ko_word WHERE start_char = ? AND can_use = true";
+                // SQL: available이 true인 항목 중, is_use가 false인 개수와 전체 개수를 동시 조회
+                const sql = `
+                    SELECT 
+                        SUM(CASE WHEN is_use = false THEN 1 ELSE 0 END) as count_available,
+                        COUNT(*) as count_all
+                    FROM ko_word 
+                    WHERE start_char = ? AND available = true
+                `;
                 const [rows] = await pool.execute(sql, [char]);
-                const count = rows[0].cnt;
                 
-                const reply = `[DB검색] '${char}'(으)로 시작하는 단어: ${count}개`;
+                // 결과가 없을 경우 SUM 연산이 null을 반환할 수 있으므로, 기본값 0으로 안전하게 처리
+                const count_available = Number(rows[0].count_available) || 0;
+                const count_all = Number(rows[0].count_all) || 0;
+                
+                const reply = `[DB검색] '${char}'(으)로 시작하는 단어: ${count_available}/${count_all}개`;
                 console.log(` -> 답변 전송 시도: ${reply}`);
                 await buzzkChat.send(reply);
 
